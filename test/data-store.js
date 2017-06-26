@@ -152,15 +152,28 @@ contract('Data-Store', function(accounts) {
 
         });
 
-  /*
-    def test_exists_query_special_case(deploy_coinbase, deployed_contracts):
-        grove = deployed_contracts.Grove
-        index_id = grove.computeIndexId(deploy_coinbase, "test-b")
+    it("Should remove a random Index",function(){
 
-        grove.insert('test-b', 'key', 1234)
+        var keys = Object.keys(tree_nodes),
+        node_id = keys[Math.floor(keys.length*Math.random())];
+        console.log("Chosen Node:",node_id);
 
-        assert grove.exists(index_id, '') is False
+        return contrct.nodeExists.call(index_id,node_id).
+        then(function(r1){
+
+          assert.equal(r1,true,"Node does not exist for removal");
+
+          contrct.removeNode(index_id,node_id)
+          .then(function(r2){
+            console.log("Deletion cost:",r2.receipt.gasUsed);
+
+            contrct.nodeExists.call(node_id)
+            .then(function(r3){
+              assert.equal(r3,false,"Node still exists after removal");
+          })
+        })
       });
-      */
+    })
+
 
     });
