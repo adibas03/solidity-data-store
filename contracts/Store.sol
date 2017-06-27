@@ -108,6 +108,7 @@ contract Store{
         if(right_node!= 0x0)
         index.nodes[right_node].left = left_node;
         //Update index.last if last
+        if(index.last == node_id)
         index.last = left_node;
 
         //Update size and delete componnts
