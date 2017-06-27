@@ -1,6 +1,7 @@
 var Store = artifacts.require("./Store.sol"),
 web3,contrct,contrct_address,deploy_coinbase,index_id = "Test-a",
 nodes_container = function(){return [[],[],[],[],[]]},
+nodes_object_container = function(){return [{},{},{},{},{}]},
 tree_nodes = {
     'a': 18,
     'b': 0,
@@ -174,6 +175,42 @@ contract('Data-Store', function(accounts) {
         })
       });
     })
+
+
+      it("Should fetch all nodes on the Index",function(done){
+        var nodes = [],last_node=0x0;
+        contrct.getIndex.call(index_id)
+        .then(function(index){
+          size = Number(index[2]);
+
+          function fetchNode(){
+          contrct.getNodesBatch.call(index_id,last_node)
+          .then(function(nodes_batch){
+              var all=new nodes_object_container,l=0,
+              titles = ['id','left','rigt','data'];
+              nodes_batch.forEach(function(r){
+
+                var rn=0;
+                r.forEach(function(c){
+                  all[rn][titles[l]] = c;
+                  rn++;
+                });
+                l++;
+              });
+                nodes = nodes.concat(all);
+
+            last_node=nodes[nodes.length-1].id;
+            if(last_node==web3.toHex(0x0) || !(nodes.length<size)){
+              console.log(nodes);
+              done();
+            }
+            else fetchNode();
+          });
+          }
+
+         fetchNode();
+        })
+      })
 
 
     });
