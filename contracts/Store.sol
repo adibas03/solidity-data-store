@@ -70,26 +70,34 @@ contract Store{
         bytes32 right_node;
         bytes32 node_id;
 
-        //check if first node;
-        bool first_node = (index.root==0x0);
         for(uint n = 0;n<nodes_data.length;n++){
             if(nodes_data[n][0] == 0x0) continue;
                 node_id = nodes_data[n][0];
-            if(first_node){
-                index.root = node_id;
-                left_node = 0x0;
-            }
-            else{
-                left_node = index.last;
-            }
+              if(n==0){
+                if(index.root==0x0){
+                    index.root = node_id;
+                    left_node = 0x0;
+                }
+                else{
+                    left_node = index.last;
+                }
+              }
+              else{
+                left_node = nodes_data[n-1][0];
+              }
 
             right_node = 0x0;
 
             nodes_to_index[node_id] = index_id;
             index.nodes[node_id] = Node(node_id,left_node,right_node,nodes_data[n][1]);
             index.size++;
+
+            //update previous node
+            if(left_node!=0x0)
+            index.nodes[left_node].right = node_id;
+
         }
-            index.last = node_id;
+        index.last = node_id;
 
     }
 
