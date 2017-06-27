@@ -40,22 +40,23 @@ contract Store{
         return(current_node.id,current_node.left,current_node.right,current_node.data);
     }
 
-    function getNodesBatch(bytes32 index_id,bytes32 last_node_id)constant returns(bytes32[5],bytes32[5],bytes32[5],bytes32[5]){
-        bytes32[5][4] memory results;
+    function getNodesBatch(bytes32 index_id,bytes32 last_node_id)constant returns(bytes32[5][4] memory results){
+        Index storage index = index_lookup[index_id];
 
         //return empty array if empty
-               return(results[0],results[1]results[2],results[3]);
- if(index_lookup[index_id].size<1)
+        if(index.size<1)
+        return(results);
 
-        Index storage index = index_lookup[index_id];
+        //Choose node to begin fetching from
         if(last_node_id == 0x0)last_node_id = index.root;
+        else last_node_id = index.nodes[last_node_id].right;
 
         uint r = 0;
-        while(r<5 && r<index.size){
-         results[r][0]= index.nodes[last_node_id].id;
-         results[r][1]= index.nodes[last_node_id].left;
-         results[r][2]= index.nodes[last_node_id].right;
-         results[r][3]= index.nodes[last_node_id].data;
+        while(r<5 && last_node_id!=0x0){
+         results[0][r]= index.nodes[last_node_id].id;
+         results[1][r]= index.nodes[last_node_id].left;
+         results[2][r]= index.nodes[last_node_id].right;
+         results[3][r]= index.nodes[last_node_id].data;
          r++;
          if(index.nodes[last_node_id].right == 0x0)
          break;
