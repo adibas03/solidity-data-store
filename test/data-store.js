@@ -1,5 +1,5 @@
 var Store = artifacts.require("./Store.sol"),
-web3,contrct,contrct_address,deploy_coinbase,index_id = "Test-a",
+web3,contrct,contrct_address,deploy_coinbase,deleted,index_id = "Test-a",
 nodes_container = function(){return [[],[],[],[],[]]},
 nodes_object_container = function(){return [{},{},{},{},{}]},
 tree_nodes = {
@@ -84,8 +84,6 @@ contract('Data-Store', function(accounts) {
           done();
         });
       }
-
-
     });
 
 
@@ -155,20 +153,20 @@ contract('Data-Store', function(accounts) {
 
     it("Should remove a random Index",function(){
 
-        var keys = Object.keys(tree_nodes),
-        node_id = keys[Math.floor(keys.length*Math.random())];
-        console.log("Chosen Node:",node_id);
+        var keys = Object.keys(tree_nodes);
+        deleted = keys[Math.floor(keys.length*Math.random())];
+        console.log("Chosen Node:",deleted);
 
-        return contrct.nodeExists.call(index_id,node_id).
+        return contrct.nodeExists.call(index_id,deleted).
         then(function(r1){
 
           assert.equal(r1,true,"Node does not exist for removal");
 
-          contrct.removeNode(index_id,node_id)
+          contrct.removeNode(index_id,deleted)
           .then(function(r2){
             console.log("Deletion cost:",r2.receipt.gasUsed);
 
-            contrct.nodeExists.call(node_id)
+            contrct.nodeExists.call(index_id,deleted)
             .then(function(r3){
               assert.equal(r3,false,"Node still exists after removal");
           })
@@ -176,6 +174,27 @@ contract('Data-Store', function(accounts) {
       });
     })
 
+    it("Should fetch a random node from the Index",function(){
+
+      var keys = Object.keys(tree_nodes),
+      node_id = keys[Math.floor(keys.length*Math.random())];
+      console.log("Chosen Node(Fetch):",node_id);
+      return contrct.nodeExists.call(index_id,node_id)
+      .then(function(e){
+        if(node_id == deleted)
+        assert.equal(false,e,"Deleted node should not exist");
+        else
+          assert.equal(true,e,"Inserted node does not exist");
+      })
+      .then(function(){
+        contrct.getNode.call(node_id)
+        .then(function(f){
+          console.log(f,web3.fromAscii(node_id));
+          //assert.equal(true,e,"Inserted node does not exist");
+        })
+      })
+
+    });
 
       it("Should fetch all nodes on the Index",function(done){
         var nodes = [],last_node=0x0;
