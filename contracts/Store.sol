@@ -34,7 +34,7 @@ contract Store{
         return nodes_to_index[node_id];
     }
 
-    function getNode(bytes32 node_id)constant returns(bytes32,bytes32,bytes32,bytes32){
+    function getNode(bytes32 node_id)constant returns(bytes32 id,bytes32 left,bytes32,bytes32){
         bytes32 index_id = nodes_to_index[node_id];
         Node memory current_node = index_lookup[index_id].nodes[node_id];
         return(current_node.id,current_node.left,current_node.right,current_node.data);
