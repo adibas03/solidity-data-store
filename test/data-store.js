@@ -60,6 +60,7 @@ contract('Data-Store', function(accounts) {
         .then(function(a){
           contrct.insertNodes(index_id,nc)
           .then(function(a){
+            console.log("Insertion cost:",a.receipt.gasUsed);
             contrct.nodeExists.call(index_id,tr)
             .then(function(e2){
               assert.equal(e2,true,"Node e2 does not exist in Index after insertion");
