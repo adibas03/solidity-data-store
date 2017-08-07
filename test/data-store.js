@@ -152,13 +152,13 @@ contract('Data-Store', function(accounts) {
 
         });
 
-    it("Should remove a random Index",function(){
+    it("Should remove a random Index",function(done){
 
         var keys = Object.keys(tree_nodes);
         deleted = keys[Math.floor(keys.length*Math.random())];
         console.log("Chosen Node:",deleted);
 
-        return contrct.nodeExists.call(index_id,deleted).
+        contrct.nodeExists.call(index_id,deleted).
         then(function(r1){
 
           assert.equal(r1,true,"Node does not exist for removal");
@@ -170,17 +170,18 @@ contract('Data-Store', function(accounts) {
             contrct.nodeExists.call(index_id,deleted)
             .then(function(r3){
               assert.equal(r3,false,"Node still exists after removal");
+              done();
           })
         })
       });
     })
 
-    it("Should fetch a random node from the Index",function(){
+    it("Should fetch a random node from the Index",function(done){
 
       var keys = Object.keys(tree_nodes),
       node_id = keys[Math.floor(keys.length*Math.random())];
       console.log("Chosen Node(Fetch):",node_id);
-      return contrct.nodeExists.call(index_id,node_id)
+      contrct.nodeExists.call(index_id,node_id)
       .then(function(e){
         if(node_id == deleted)
         assert.equal(false,e,"Deleted node should not exist");
@@ -191,7 +192,7 @@ contract('Data-Store', function(accounts) {
         contrct.getNode.call(node_id)
         .then(function(f){
           console.log(f,web3.fromAscii(node_id));
-          //assert.equal(true,e,"Inserted node does not exist");
+          done();
         })
       })
 
