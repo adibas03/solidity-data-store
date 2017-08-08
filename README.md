@@ -11,7 +11,7 @@ This reduces the cost attached to the process of storage, and retrieval of data,
 `Store.removeNode(indexid, nodeid)`
 
 #### fetch node data
-`Store.getNode(indexid, nodeid)`
+`Store.getNode(nodeid)`
 
 #### fetch a batch (5 nodes) from index data
-`Store.getNodesBatch(indexid)`
+`Store.getNodesBatch(indexid, last_nodeid)`
